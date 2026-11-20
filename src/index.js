@@ -1,12 +1,6 @@
-import express from 'express';
+import app from "./app.js";
+import { env } from "./config/env.js";
 
-const app = express();
-const port = 5000;
-
-app.get('/', (req, res) => {
-  res.send('Mentor lagbe is running...');
-});
-
-app.listen(port, () => {
-  console.log(`server running on port ${port}`);
+app.listen(env.port, () => {
+  console.log(`MentorLagbe server listening on http://localhost:${env.port}`);
 });
