@@ -36,10 +36,23 @@ export function collections() {
     };
 }
 
-async function ensureIndexes(db) {
-    await db
-        .collection("applications")
-        .createIndex({ tuitionId: 1, studentId: 1 }, { unique: true });
 
-    await db.collection("tuitions").createIndex({ status: 1, createdAt: -1 });
+async function ensureIndexes(db) {
+    const applications = db.collection("applications");
+
+    await applications.dropIndex("tuitionId_1_studentId_1").catch(() => { });
+
+    // A student can apply to the same tuition only once
+    await applications.createIndex(
+        { tuitionId: 1, studentEmail: 1 },
+        { unique: true }
+    );
+
+    await db.collection("tuitions").dropIndex("status_1_createdAt_-1").catch(() => { });
+
+    await db
+        .collection("tuitions")
+        .createIndex({ approvalStatus: 1, isActive: 1, createdAt: -1 });
+
+    await db.collection("tuitions").createIndex({ tutorEmail: 1, createdAt: -1 });
 }
