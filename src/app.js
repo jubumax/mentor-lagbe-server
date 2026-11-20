@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
+import { toNodeHandler } from "better-auth/node";
 import { corsOptions } from "./config/cors.js";
+import { getAuth } from "./config/auth.js";
 import routes from "./routes/index.js";
 import { notFound } from "./middlewares/notFound.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
@@ -8,6 +10,12 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 const app = express();
 
 app.use(cors(corsOptions));
+
+let authHandler;
+app.all("/api/auth/*splat", (req, res, next) => {
+    authHandler ??= toNodeHandler(getAuth());
+    return authHandler(req, res, next);
+});
 
 app.use(express.json());
 
