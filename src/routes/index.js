@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { getDB } from "../config/db.js";
 import jwtRoutes from "./jwt.routes.js";
+import userRoutes from "./user.routes.js";
 
 const router = Router();
 
@@ -10,5 +11,6 @@ router.get("/health", async (req, res) => {
 });
 
 router.use("/jwt", jwtRoutes);
+router.use("/users", userRoutes);
 
 export default router;

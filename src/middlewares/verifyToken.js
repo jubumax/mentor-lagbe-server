@@ -31,6 +31,9 @@ export async function verifyToken(req, res, next) {
         image: user.image ?? null,
         role: user.role ?? "student",
         plan: user.plan ?? "free",
+        phone: user.phone ?? "",
+        bio: user.bio ?? "",
+        createdAt: user.createdAt,
     };
 
     next();
