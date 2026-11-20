@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { corsOptions } from "./config/cors.js";
+import routes from "./routes/index.js";
 import { notFound } from "./middlewares/notFound.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 
@@ -13,6 +14,8 @@ app.use(express.json());
 app.get("/", (req, res) => {
     res.json({ success: true, message: "MentorLagbe server is running" });
 });
+
+app.use("/api", routes);
 
 app.use(notFound);
 app.use(errorHandler);

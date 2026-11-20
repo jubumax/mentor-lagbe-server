@@ -9,4 +9,6 @@ export const env = {
         .split(",")
         .map((url) => url.trim())
         .filter(Boolean),
+    mongodbUri: process.env.MONGODB_URI,
+    dbName: process.env.DB_NAME ?? "mentorlagbe",
 };
