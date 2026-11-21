@@ -5,7 +5,31 @@ import {
     PLANS,
 } from "../config/constants.js";
 import { validateTuitionInput } from "../utils/validators.js";
+import { buildPagination, parsePagination } from "../utils/pagination.js";
+import { buildTuitionQuery } from "../utils/buildTuitionQuery.js";
 
+// GET /api/tuitions (public) -- search, filter and paginate approved tuitions
+export async function listTuitions(req, res) {
+    const { filter, sort } = buildTuitionQuery(req.query);
+    const { page, limit, skip } = parsePagination(req.query);
+    const { tuitions } = collections();
+
+    const [items, total] = await Promise.all([
+        tuitions
+            .find(filter, { projection: { description: 0 } })
+            .sort(sort)
+            .skip(skip)
+            .limit(limit)
+            .toArray(),
+        tuitions.countDocuments(filter),
+    ]);
+
+    res.json({
+        success: true,
+        tuitions: items,
+        pagination: buildPagination(total, page, limit),
+    });
+}
 
 // POST /api/tuitions (tutor only)
 export async function createTuition(req, res) {
