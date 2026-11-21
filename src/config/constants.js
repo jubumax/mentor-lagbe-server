@@ -48,5 +48,11 @@ export const APPROVAL_STATUS = {
     REJECTED: "rejected",
 };
 
+export const APPLICATION_STATUS = {
+    PENDING: "pending",
+    ACCEPTED: "accepted",
+    REJECTED: "rejected",
+};
+
 
 export const FREE_TUITION_LIMIT = 2;
