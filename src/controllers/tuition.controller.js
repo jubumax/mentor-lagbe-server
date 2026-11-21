@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { collections } from "../config/db.js";
 import {
     APPROVAL_STATUS,
@@ -7,6 +8,10 @@ import {
 import { validateTuitionInput } from "../utils/validators.js";
 import { buildPagination, parsePagination } from "../utils/pagination.js";
 import { buildTuitionQuery } from "../utils/buildTuitionQuery.js";
+
+const OBJECT_ID_PATTERN = /^[a-f\d]{24}$/i;
+const FEATURED_COUNT = 6;
+
 
 // GET /api/tuitions (public) -- search, filter and paginate approved tuitions
 export async function listTuitions(req, res) {
@@ -30,6 +35,63 @@ export async function listTuitions(req, res) {
         pagination: buildPagination(total, page, limit),
     });
 }
+
+// GET /api/tuitions/featured (public) -- the latest approved and active tuitions
+export async function getFeaturedTuitions(req, res) {
+    const { filter } = buildTuitionQuery();
+    const { tuitions } = collections();
+
+    const items = await tuitions
+        .find(filter, { projection: { description: 0 } })
+        .sort({ createdAt: -1, _id: -1 })
+        .limit(FEATURED_COUNT)
+        .toArray();
+
+    res.json({ success: true, tuitions: items });
+}
+
+
+// GET /api/tuitions/:id (public) -- one approved tuition with a short tutor profile
+export async function getTuitionById(req, res) {
+    const { id } = req.params;
+
+    if (!OBJECT_ID_PATTERN.test(id)) {
+        return res
+            .status(404)
+            .json({ success: false, message: "Tuition not found." });
+    }
+
+    const { filter } = buildTuitionQuery();
+    const { tuitions, users } = collections();
+
+    const tuition = await tuitions.findOne({ ...filter, _id: new ObjectId(id) });
+    if (!tuition) {
+        return res
+            .status(404)
+            .json({ success: false, message: "Tuition not found." });
+    }
+
+    const tutor = await users.findOne(
+        { email: tuition.tutorEmail },
+        { projection: { name: 1, email: 1, image: 1, bio: 1, plan: 1 } }
+    );
+
+    res.json({
+        success: true,
+        tuition,
+        // Phone numbers are never exposed here
+        tutor: tutor
+            ? {
+                name: tutor.name,
+                email: tutor.email,
+                image: tutor.image ?? null,
+                bio: tutor.bio ?? "",
+                plan: tutor.plan ?? PLANS.FREE,
+            }
+            : null,
+    });
+}
+
 
 // POST /api/tuitions (tutor only)
 export async function createTuition(req, res) {
