@@ -3,6 +3,7 @@ import cors from "cors";
 import { toNodeHandler } from "better-auth/node";
 import { corsOptions } from "./config/cors.js";
 import { getAuth } from "./config/auth.js";
+import { handleStripeWebhook } from "./controllers/payment.controller.js";
 import routes from "./routes/index.js";
 import { notFound } from "./middlewares/notFound.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
@@ -16,6 +17,13 @@ app.all("/api/auth/*splat", (req, res, next) => {
     authHandler ??= toNodeHandler(getAuth());
     return authHandler(req, res, next);
 });
+
+// Stripe signs the raw body, so this route must also come before express.json()
+app.post(
+    "/api/payments/webhook",
+    express.raw({ type: "application/json" }),
+    handleStripeWebhook
+);
 
 app.use(express.json());
 

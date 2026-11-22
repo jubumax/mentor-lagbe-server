@@ -224,3 +224,35 @@ export async function getAdminTuition(req, res) {
 
     res.json({ success: true, tuition });
 }
+
+// GET /api/admin/transactions?search&page&limit -- Stripe payment records
+export async function listTransactions(req, res) {
+    const { payments } = collections();
+    const filter = {};
+
+    const search = String(firstValue(req.query.search) ?? "").trim().slice(0, 100);
+    if (search) {
+        const pattern = new RegExp(escapeRegex(search), "i");
+        filter.$or = [{ userName: pattern }, { userEmail: pattern }, { transactionId: pattern }];
+    }
+
+    const { page, limit, skip } = parsePagination(req.query, { defaultLimit: 10, maxLimit: 50 });
+
+    const [items, total, revenue] = await Promise.all([
+        payments.find(filter).sort({ paidAt: -1, _id: -1 }).skip(skip).limit(limit).toArray(),
+        payments.countDocuments(filter),
+        payments
+            .aggregate([
+                { $match: { paymentStatus: "paid" } },
+                { $group: { _id: null, total: { $sum: "$amount" } } },
+            ])
+            .toArray(),
+    ]);
+
+    res.json({
+        success: true,
+        transactions: items,
+        totalRevenue: revenue[0]?.total ?? 0,
+        pagination: buildPagination(total, page, limit),
+    });
+}

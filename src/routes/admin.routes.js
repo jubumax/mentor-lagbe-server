@@ -3,6 +3,7 @@ import {
     getAdminStats,
     getAdminTuition,
     listAdminTuitions,
+    listTransactions,
     listUsers,
     updateTuitionStatus,
     updateUserRole,
@@ -19,5 +20,6 @@ router.patch("/users/:id/role", updateUserRole);
 router.get("/tuitions", listAdminTuitions);
 router.get("/tuitions/:id", getAdminTuition);
 router.patch("/tuitions/:id/status", updateTuitionStatus);
+router.get("/transactions", listTransactions);
 
 export default router;

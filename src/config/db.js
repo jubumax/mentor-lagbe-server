@@ -55,4 +55,10 @@ async function ensureIndexes(db) {
         .createIndex({ approvalStatus: 1, isActive: 1, createdAt: -1 });
 
     await db.collection("tuitions").createIndex({ tutorEmail: 1, createdAt: -1 });
+
+    // Each Stripe session is recorded once, even if it is reported twice
+    await db
+        .collection("payments")
+        .createIndex({ stripeSessionId: 1 }, { unique: true });
+    await db.collection("payments").createIndex({ paidAt: -1 });
 }
