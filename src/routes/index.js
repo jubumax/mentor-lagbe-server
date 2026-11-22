@@ -5,6 +5,7 @@ import userRoutes from "./user.routes.js";
 import tuitionRoutes from "./tuition.routes.js";
 import statsRoutes from "./stats.routes.js";
 import applicationRoutes from "./application.routes.js";
+import adminRoutes from "./admin.routes.js";
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use("/users", userRoutes);
 router.use("/tuitions", tuitionRoutes);
 router.use("/stats", statsRoutes);
 router.use("/applications", applicationRoutes);
+router.use("/admin", adminRoutes);
 
 export default router;
