@@ -41,6 +41,8 @@ export const CLASS_LEVELS = [
 ];
 
 export const TUITION_MODES = ["Online", "Offline"];
+export const FREE_TUITION_LIMIT = 2;
+
 
 export const APPROVAL_STATUS = {
     PENDING: "pending",
@@ -54,5 +56,9 @@ export const APPLICATION_STATUS = {
     REJECTED: "rejected",
 };
 
+// One-time Pro plan prices in US dollars, decided by the buyer's role.
+export const PRO_PLANS = {
+    [ROLES.TUTOR]: { name: "Pro Tutor Plan", amount: 15 },
+    [ROLES.STUDENT]: { name: "Pro Student Plan", amount: 10 },
+};
 
-export const FREE_TUITION_LIMIT = 2;

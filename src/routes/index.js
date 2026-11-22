@@ -6,6 +6,7 @@ import tuitionRoutes from "./tuition.routes.js";
 import statsRoutes from "./stats.routes.js";
 import applicationRoutes from "./application.routes.js";
 import adminRoutes from "./admin.routes.js";
+import paymentRoutes from "./payment.routes.js";
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use("/tuitions", tuitionRoutes);
 router.use("/stats", statsRoutes);
 router.use("/applications", applicationRoutes);
 router.use("/admin", adminRoutes);
+router.use("/payments", paymentRoutes);
 
 export default router;
