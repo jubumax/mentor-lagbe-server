@@ -211,3 +211,16 @@ export async function updateTuitionStatus(req, res) {
         approvalStatus: status,
     });
 }
+
+
+// GET /api/admin/tuitions/:id -- one full tuition of any status, for review
+export async function getAdminTuition(req, res) {
+    const id = toObjectId(req.params.id);
+    const tuition = id ? await collections().tuitions.findOne({ _id: id }) : null;
+
+    if (!tuition) {
+        return res.status(404).json({ success: false, message: "Tuition not found." });
+    }
+
+    res.json({ success: true, tuition });
+}
