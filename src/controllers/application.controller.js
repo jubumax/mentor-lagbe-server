@@ -69,13 +69,16 @@ export async function applyForTuition(req, res) {
         tuitionId,
         tuitionTitle: tuition.title,
         subject: tuition.subject,
+        monthlyFee: tuition.monthlyFee,
         tutorEmail: tuition.tutorEmail,
         tutorName: tuition.tutorName,
-        studentEmail: req.user.email,
         studentName: req.user.name,
-        ...values,
+        studentEmail: req.user.email,
+        studentPhone: values.phone,
+        preferredSchedule: values.preferredSchedule,
+        studentNote: values.learningNote,
         status: APPLICATION_STATUS.PENDING,
-        createdAt: now,
+        appliedAt: now,
         updatedAt: now,
     };
 
@@ -106,7 +109,7 @@ export async function getMyApplications(req, res) {
 
     const items = await applications
         .find({ studentEmail: req.user.email })
-        .sort({ createdAt: -1, _id: -1 })
+        .sort({ appliedAt: -1, _id: -1 })
         .toArray();
 
     res.json({ success: true, applications: items });
